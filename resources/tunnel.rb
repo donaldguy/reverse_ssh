@@ -5,14 +5,14 @@ property :local_port, Fixnum, default: 22
 
 property :local_user, String, default: lazy { node['reverse_ssh']['local_user'] }
 property :remote_user, String, default: lazy { node['reverse_ssh']['remote_user'] }
-property :public_key_path, String, default: lazy { "/home/#{local_user}/.ssh/id_rsa.pub" }
+property :public_key_path, String, default: lazy { ::File.expand_path("~#{local_user}/.ssh/id_rsa.pub") }
 
 property :install_autossh, [true, false], default: true
 property :autossh_binary, String, default: '/usr/bin/autossh'
 property :autossh_flags, String, default: lazy { "-M #{node['reverse_ssh']['autossh_monitoring_port']}" }
 property :ssh_flags, String, default: "-t -t" #very force TTY allocation.
 
-property :env_vars, Hash, default: lazy { {HOME: "/home/#{local_user}"} }
+property :env_vars, Hash, default: lazy { {HOME: ::File.expand_path("~#{local_user}") } }
 property :service_name, String, default: lazy { "rssh_#{name}" }
 property :service_type, Symbol, default: :sysvinit
 
